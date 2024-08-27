@@ -12,6 +12,7 @@ plt.style.use('science')
 
 
 def inc_vec(vec,lag):
+    
     i_delta = np.zeros(len(vec)-lag)
     for i in range(len(vec)-lag):
         i_delta[i] = vec[i + lag] - vec[i]
@@ -36,42 +37,22 @@ inc_vec(vec, lag)
 
 Here, the function calculates the difference between each consecutive pair of elements with a lag of 2. 
 The first element of the returned array is the difference between the elements at index 2 and index 0, 
-the second element is the difference between the elements at index 3 and index 1, and so on.'''
+the second element is the difference between the elements at index 3 and index 1, and so on.
+'''
 
 
 f = sorted(glob.glob('/path/*.dat'))
 
 
-FFTn = 121
-time_Ave = np.empty((0,FFTn))
-error = np.empty((0,FFTn))
-Gzerr = np.empty((0))
-tn = 3;time = 0;t = 0
-CL = 200; Wn = 100;
-#      z = 0.5
-# Zcl = 220; Zn=0;
-N = 239
-SFVtime = np.empty((0,N))
 
+CL = 200; Wn = 100; Kn = 100; t=10
 
-Xstep = np.arange(1,240,1)
+variables = ['Vx', 'Vy', 'Vz', 'Bx', 'By', 'Bz', 'V']
+delta_aveZ = {f'delta{var}_aveZ': np.empty((0, Kn)) for var in variables}
+# each array is associated with a meaningful key ('deltaVx_aveZ', etc.)
 
-Kur_time = np.empty((0,25))
+for frame in f[0:t:3]:        # number of datafile​
 
-Kn = 100
-t=110
-deltaVx_aveZ = np.empty((0,Kn))
-deltaVy_aveZ = np.empty((0,Kn))
-deltaVz_aveZ = np.empty((0,Kn))
-
-deltaBx_aveZ = np.empty((0,Kn))
-deltaBy_aveZ = np.empty((0,Kn))
-deltaBz_aveZ = np.empty((0,Kn))
-deltaV_aveZ = np.empty((0,Kn))
-
-for frame in f[t:t+1:3]:        # number of datafile​
-
-    
     ds = yt.load(frame, unit_system='code')
     ad = ds.all_data()
     level = 3
@@ -83,22 +64,19 @@ for frame in f[t:t+1:3]:        # number of datafile​
     
     pr = ad_grid['e'].value
     
-    
-    # Define Zcl and Zn -------------- total iteration in z axis is 160
-    Zcl=107;  Zn=27;  # Zcl - central point; Zn - distance from the center, as subdomain in 3D
-    
-    # Calculate the number of iterations in the loop
-    zn_range = range(Zcl - Zn, Zcl + Zn, 5)
-    Zn_iterations = len(zn_range)
-    
     # Define the variables you want to initialize
     variables = ['Vx', 'Vy', 'Vz', 'Bx', 'By', 'Bz', 'V']
     
     # Initialize empty arrays for kurtosis statistics and results
     kur_mean = {var: np.empty((0)) for var in variables}
     delta = {var: np.empty((0)) for var in variables}
-
-    for zn in range(Zcl-Zn, Zcl+Zn, 5):
+    
+    # Define Zcl and Zn -------------- total iteration in z axis is 160
+    Zcl, Zn = 107, 27 # Zcl - central point; Zn - distance from the center, as subdomain in 3D
+    zn_range = range(Zcl - Zn, Zcl + Zn, 5)
+    Zn_iterations = len(zn_range)
+    
+    for zn in zn_range:
             
         rho = density[:, :, zn]  # iteration in z direction as the energy propagates along z axis
        
@@ -131,7 +109,6 @@ for frame in f[t:t+1:3]:        # number of datafile​
                 mean_Kur = np.mean(kur_mean[var])
                 delta[var] = np.append(delta[var], [mean_Kur], axis=0)
         
-       
         # Average kurtosis over Zn_iterations for each variable and store the results
         delta_aveZ = {}
         for var in variables:
@@ -199,10 +176,7 @@ def imshow_grid(data_list):
         im = axes[row, col].imshow(data, extent=[0, 100, 0, 30], origin='lower', interpolation='lanczos', cmap='seismic', vmax=3, vmin=-3, aspect='auto')
         axes[row, col].set_xticks([])
         axes[row, col].set_yticks([])
-        # if col == 1:
-        #     cbar = fig.colorbar(im, cax=axes[row, col], extend='both', pad=0.05)
-        #     cbar.ax.tick_params(labelsize=10)
-        #     cbar.ax.set_xlabel('colorbar label', fontsize=12)
+        
         axes[row, col].set_title([r'V$_x$', r'B$_x$', r'V$_y$', r'B$_y$',  r'V$_z$',r'B$_z$'][i], fontsize=15)
         if row == 2:
             axes[row, col].set_xlabel(r'$\ell$', fontsize=14)
@@ -241,7 +215,6 @@ def imshow_grid(data_list):
 
 
 
-#r'V$_x$', r'V$_y$', r'V$_z$', r'B$_x$', r'B$_y$', r'B$_z$'
 tn = 1 
 
 # dist = getattr(stats, norm)(loc=-2, scale=4)
@@ -272,12 +245,11 @@ plt.show()
 # x = np.linspace(0, Kn, len(newarrBz[1,:]))*2*np.pi/0.1
 # timet = np.linspace(0, 30, 74)
 
-'''
 aa = [newarrVx,newarrBx,newarrVy,newarrBy,newarrBz,newarrVz]
 plt.figure(dpi=400)
 imshow_grid(aa)
 
-
+'''
 # plt.axhline(y=0)
 plt.imshow(newarrVx, extent=[0,100,0,30],origin= 'lower', interpolation='lanczos', cmap='seismic',vmax=3,vmin=-3)
 plt.colorbar(extend='both',orientation="horizontal");
