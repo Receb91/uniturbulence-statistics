@@ -165,17 +165,19 @@ def imshow_grid(data_list):
     plt.show()
 
 
-
 tn = 1 
 
-# dist = getattr(stats, norm)(loc=-2, scale=4)
-newarrVx = deltaVx_aveZ.reshape(tn,Kn)
-newarrVy = deltaVy_aveZ.reshape(tn,Kn)
-newarrVz = deltaVz_aveZ.reshape(tn,Kn)
+newarrV = {var: delta_aveZ[f'delta{var}_aveZ'].reshape(tn, Kn) for var in ['Vx', 'Vy', 'Vz']}
+newarrB = {var: delta_aveZ[f'delta{var}_aveZ'].reshape(tn, Kn) for var in ['Bx', 'By', 'Bz']}
 
-newarrBx = deltaBx_aveZ.reshape(tn,Kn)
-newarrBy = deltaBy_aveZ.reshape(tn,Kn)
-newarrBz = deltaBz_aveZ.reshape(tn,Kn)
+newarrVx, newarrVy, newarrVz = newarrV['Vx'], newarrV['Vy'], newarrV['Vz']
+newarrBx, newarrBy, newarrBz = newarrB['Bx'], newarrB['By'], newarrB['Bz']
+
+aa = [newarrVx,newarrBx,newarrVy,newarrBy,newarrBz,newarrVz]
+plt.figure(dpi=400)
+imshow_grid(aa)
+
+
 
 t = np.linspace(0.0004,0.04,len(newarrBx[0,:])-1)
 plt.figure(dpi=300)
@@ -193,12 +195,7 @@ plt.legend()
 
 plt.show()
 
-# x = np.linspace(0, Kn, len(newarrBz[1,:]))*2*np.pi/0.1
-# timet = np.linspace(0, 30, 74)
 
-aa = [newarrVx,newarrBx,newarrVy,newarrBy,newarrBz,newarrVz]
-plt.figure(dpi=400)
-imshow_grid(aa)
 
 '''
 # plt.axhline(y=0)
@@ -214,13 +211,6 @@ plt.show()
 # outfile = open('text files/kurtosis_Vx.txt','a')
 # np.savetxt(outfile,dt,fmt='%e')
 # outfile.close()
-
-
-# KURTOS = np.genfromtxt('text files/kurtosis_Vx.txt', delimiter="");
-
-# data = dist.rvs(size=1000)
-
-# kur = kurtosis(data, fisher=True)
 
 
 
