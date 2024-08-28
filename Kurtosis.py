@@ -24,8 +24,8 @@ def inc_vec(vec,lag):
 
 The function creates an array of zeros called i_delta with a length of 'len(vec) - lag'. 
 
-Then, it iterates over vec with a for loop and for each iteration, it calculates the difference between 
-the current value and the value lag steps ahead and assigns it to the corresponding index in i_delta.
+Then, it iterates over vec with a for loop, and for each iteration, it calculates the difference between 
+The current value and the value lag a step ahead and are assigned to the corresponding index in i_delta.
 
 Example:
 
@@ -49,7 +49,7 @@ CL = 200; Wn = 100; Kn = 100; t=10
 
 variables = ['Vx', 'Vy', 'Vz', 'Bx', 'By', 'Bz', 'V']
 delta_aveZ = {f'delta{var}_aveZ': np.empty((0, Kn)) for var in variables}
-# each array is associated with a meaningful key ('deltaVx_aveZ', etc.)
+# Each array is associated with a meaningful key ('deltaVx_aveZ', etc.)
 
 for frame in f[0:t:3]:        # number of datafile​
 
@@ -71,14 +71,14 @@ for frame in f[0:t:3]:        # number of datafile​
     kur_mean = {var: np.empty((0)) for var in variables}
     delta = {var: np.empty((0)) for var in variables}
     
-    # Define Zcl and Zn -------------- total iteration in z axis is 160
+    # Define Zcl and Zn -------------- total iteration in the z-axis is 160
     Zcl, Zn = 107, 27 # Zcl - central point; Zn - distance from the center, as subdomain in 3D
     zn_range = range(Zcl - Zn, Zcl + Zn, 5)
     Zn_iterations = len(zn_range)
     
     for zn in zn_range:
             
-        rho = density[:, :, zn]  # iteration in z direction as the energy propagates along z axis
+        rho = density[:, :, zn]  # iteration in z-direction ---- the energy propagates along z-axis
        
         m = [m1[:, :, zn], m2[:, :, zn], m3[:, :, zn]]
         b = [b1[:, :, zn], b2[:, :, zn], b3[:, :, zn]]
@@ -114,55 +114,6 @@ for frame in f[0:t:3]:        # number of datafile​
         for var in variables:
             mean_Kur_inz = np.mean(delta[var].reshape(Zn_iterations, Kn), axis=0)
             delta_aveZ[var] = np.append(delta_aveZ.get(var, np.empty((0))), [mean_Kur_inz], axis=0)
-    
-    
-
-
-
-# def imshow_grid(data_list):
-    # Set up the figure and axes
-    # fig, axes = plt.subplots(2, 3, figsize=(8, 4), gridspec_kw={'width_ratios': [1.2, 1.2, 1.2], 'wspace': -0.25, 'hspace': 0.12})
-    
-    # # Display each image on its own axis
-    # for i, data in enumerate(data_list):
-    #     row = i // 3
-    #     col = i % 3
-    #     im = axes[row, col].imshow(data, extent=[0,100,0,30], origin='lower', interpolation='lanczos', cmap='seismic', vmax=3, vmin=-3)
-    #     axes[row, col].set_xticks([])
-    #     axes[row, col].set_yticks([])
-    #     if col == 0:
-    #         axes[row, col].set_ylabel('time', fontsize=12)
-    #         if row == 0:
-    #             axes[row, col].xaxis.set_ticks_position('top')
-    #         if row == 1:
-    #             axes[row, col].set_yticks([0, data.shape[0]//2, data.shape[0]])
-    #             axes[row, col].set_yticks([0, 10,  20, 30])
-    #             axes[row, col].set_ylabel('time', fontsize=12)
-    #     # if col == 2:
-    #     #     cbar = fig.colorbar(im, cax=axes[row, col], extend='both', pad=0.05)
-    #     #     cbar.ax.tick_params(labelsize=10)
-    #     #     cbar.ax.set_xlabel('colorbar label', fontsize=12)
-    #     axes[row, col].set_title([r'V$_x$', r'V$_y$', r'V$_z$', r'B$_x$', r'B$_y$', r'B$_z$'][i], fontsize=12)
-    #     if row == 1:
-    #         axes[row, col].set_xlabel(r'$\ell$', fontsize=13)
-    #         if col == 0:
-    #             axes[row, col].set_xticks([0, data.shape[1]//2, data.shape[1]])
-    #             axes[row, col].set_xticks([0, 25, 50, 75, 100])
-    # # Set the same x and y limits for all axes
-    # for ax in axes.flat:
-    #     ax.set_xlim([0, data_list[0].shape[1]])
-    #     ax.set_ylim([0, data_list[0].shape[0]])
-    
-    # # Remove the top and right spines
-    # for ax in axes.flat:
-    #     ax.spines['top'].set_visible(False)
-    #     ax.spines['right'].set_visible(False)
-    
-    # cbar_ax = fig.add_axes([0.93, 0.15, 0.02, 0.7])
-    # cbar = fig.colorbar(im, cax=cbar_ax, extend='both')
-    # cbar.ax.tick_params(labelsize=15)
-    # # Show the plot
-    # plt.show()
 
 
 def imshow_grid(data_list):
